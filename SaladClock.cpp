@@ -1,0 +1,70 @@
+#include <iostream>
+#include <string>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+#include <windows.h>
+
+std::string GetCurrentTimeFormatted() {
+    auto now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+    std::tm* localTime = std::localtime(&currentTime);
+
+    std::ostringstream oss;
+    oss << std::setw(2) << std::setfill('0') << localTime->tm_hour << ":"
+        << std::setw(2) << std::setfill('0') << localTime->tm_min << ":"
+        << std::setw(2) << std::setfill('0') << localTime->tm_sec;
+    return oss.str();
+}
+
+int main(int argc, char* argv[]) {
+    if (argc == 1 || (argc > 1 && std::string(argv[1]) != "--powershell")) {
+        char exePath[MAX_PATH];
+        GetModuleFileNameA(NULL, exePath, MAX_PATH);
+        
+        std::string wtCommand = "wt.exe powershell.exe -NoExit -Command \"& '" + std::string(exePath) + "' --powershell\"";
+        
+        STARTUPINFOA si = { sizeof(si) };
+        PROCESS_INFORMATION pi;
+        if (CreateProcessA(NULL, (char*)wtCommand.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            CloseHandle(pi.hProcess);
+            CloseHandle(pi.hThread);
+            return 0; 
+        }
+    }
+
+    SetConsoleTitleA("SaladClock :3");
+
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(consoleHandle, &cursorInfo);
+    cursorInfo.bVisible = FALSE; 
+    SetConsoleCursorInfo(consoleHandle, &cursorInfo);
+
+    std::string lastTime = "";
+
+    std::system("cls");
+
+    while (true) {
+        std::string currentTime = GetCurrentTimeFormatted();
+
+        if (currentTime != lastTime) {
+            lastTime = currentTime;
+
+            COORD topLeft = { 0, 0 };
+            SetConsoleCursorPosition(consoleHandle, topLeft);
+
+            std::cout << "====================================================\n";
+            std::cout << "  SALADCLOCK v1.0.0 | Thank You for Downloading! \n";
+            std::cout << "====================================================\n\n";
+            
+            std::string figletCommand = "figlet " + currentTime;
+            std::system(figletCommand.c_str());
+        }
+
+        Sleep(50);
+    }
+
+    return 0;
+}
