@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
             std::cout << "  SALADCLOCK v1.0.0 | Thank You for Downloading! \n";
             std::cout << "====================================================\n\n";
             
-            std::string figletCommand = "figlet " + currentTime;
+            std::string figletCommand = "figlet -f script " + currentTime;
             std::system(figletCommand.c_str());
         }
 
