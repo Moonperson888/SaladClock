@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
             SetConsoleCursorPosition(consoleHandle, topLeft);
 
             std::cout << "====================================================\n";
-            std::cout << "  SALADCLOCK v1.0.0 | Thank You for Downloading! \n";
+            std::cout << "  SALADCLOCK v1.1.0 | Thank You for Downloading! \n";
             std::cout << "====================================================\n\n";
             
             std::string figletCommand = "figlet -f script " + currentTime;
